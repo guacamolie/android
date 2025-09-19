@@ -42,11 +42,11 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.11"
     }
-    packaging {
+    // ... other configurations
+    packagingOptions { // Use packagingOptions instead
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
-    }
+        }    }
 }
 
 dependencies {
@@ -81,4 +81,5 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    implementation(libs.androidx.material3)
 }
