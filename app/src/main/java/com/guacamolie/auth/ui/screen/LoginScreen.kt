@@ -42,15 +42,18 @@ fun LoginScreen(
 ) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    
+
     val authState by viewModel.authState
-    
+
     LaunchedEffect(authState.isSuccess, authState.token) {
-        if (authState.isSuccess && authState.token != null) {
-            onLoginSuccess(authState.token)
+        val token = authState.token // Assign to a local variable
+        if (authState.isSuccess && token != null) {
+            onLoginSuccess(token) // Use the local variable
         }
     }
-    
+
+
+
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
@@ -73,15 +76,15 @@ fun LoginScreen(
                     style = MaterialTheme.typography.headlineMedium,
                     fontWeight = FontWeight.Bold
                 )
-                
+
                 Text(
                     text = "Sign in to your account",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
-                
+
                 Spacer(modifier = Modifier.height(8.dp))
-                
+
                 OutlinedTextField(
                     value = email,
                     onValueChange = { email = it },
@@ -90,7 +93,7 @@ fun LoginScreen(
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                     singleLine = true
                 )
-                
+
                 OutlinedTextField(
                     value = password,
                     onValueChange = { password = it },
@@ -100,16 +103,18 @@ fun LoginScreen(
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     singleLine = true
                 )
-                
-                if (authState.error != null) {
+
+                // Store authState.error in a local variable
+                val error = authState.error
+                if (error != null) {
                     Text(
-                        text = authState.error,
+                        text = error, // Use the local variable here
                         color = MaterialTheme.colorScheme.error,
                         style = MaterialTheme.typography.bodySmall,
                         textAlign = TextAlign.Center
                     )
                 }
-                
+
                 Button(
                     onClick = {
                         if (email.isNotBlank() && password.isNotBlank()) {
@@ -133,7 +138,7 @@ fun LoginScreen(
                         Text("Sign In")
                     }
                 }
-                
+
                 Row {
                     Text(
                         text = "Don't have an account? ",

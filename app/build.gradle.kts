@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "com.guacamolie.auth"
-    compileSdk = 34
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.guacamolie.auth"
@@ -73,6 +73,7 @@ dependencies {
     
     // Navigation
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.compose.foundation.layout)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

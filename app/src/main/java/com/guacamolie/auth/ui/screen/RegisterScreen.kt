@@ -48,7 +48,7 @@ fun RegisterScreen(
     
     LaunchedEffect(authState.isSuccess, authState.token) {
         if (authState.isSuccess && authState.token != null) {
-            onRegisterSuccess(authState.token)
+            onRegisterSuccess(authState.token as String)
         }
     }
     
@@ -113,7 +113,7 @@ fun RegisterScreen(
                 
                 if (authState.error != null) {
                     Text(
-                        text = authState.error,
+                        text = authState.error as String,
                         color = MaterialTheme.colorScheme.error,
                         style = MaterialTheme.typography.bodySmall,
                         textAlign = TextAlign.Center
