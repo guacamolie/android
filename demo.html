@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Android JWT Auth App Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f5f5f5;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .phone-container {
+            width: 360px;
+            height: 640px;
+            background: #000;
+            border-radius: 25px;
+            padding: 20px;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .screen {
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            border-radius: 15px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .status-bar {
+            height: 30px;
+            background: #6750A4;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 15px;
+            color: white;
+            font-size: 12px;
+        }
+        
+        .content {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 24px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 300px;
+        }
+        
+        .title {
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 8px;
+            color: #1D1B20;
+        }
+        
+        .subtitle {
+            font-size: 14px;
+            text-align: center;
+            color: #49454F;
+            margin-bottom: 24px;
+        }
+        
+        .input-group {
+            margin-bottom: 16px;
+        }
+        
+        .input-field {
+            width: 100%;
+            padding: 16px;
+            border: 1px solid #79747E;
+            border-radius: 4px;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        
+        .input-field:focus {
+            border-color: #6750A4;
+            border-width: 2px;
+        }
+        
+        .input-label {
+            position: absolute;
+            left: 16px;
+            top: 16px;
+            color: #49454F;
+            pointer-events: none;
+            transition: all 0.2s;
+            background: white;
+            padding: 0 4px;
+        }
+        
+        .input-wrapper {
+            position: relative;
+        }
+        
+        .input-field:focus + .input-label,
+        .input-field:not(:placeholder-shown) + .input-label {
+            top: -8px;
+            font-size: 12px;
+            color: #6750A4;
+        }
+        
+        .button {
+            width: 100%;
+            padding: 16px;
+            background: #6750A4;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            margin-top: 16px;
+        }
+        
+        .button:hover {
+            background: #5A4399;
+        }
+        
+        .button:disabled {
+            background: #E8DEF8;
+            color: #79747E;
+            cursor: not-allowed;
+        }
+        
+        .text-button {
+            background: none;
+            border: none;
+            color: #6750A4;
+            cursor: pointer;
+            font-size: 14px;
+            text-decoration: underline;
+        }
+        
+        .footer-text {
+            text-align: center;
+            margin-top: 16px;
+            font-size: 14px;
+            color: #49454F;
+        }
+        
+        .error-text {
+            color: #B3261E;
+            font-size: 12px;
+            margin-top: 8px;
+            text-align: center;
+        }
+        
+        .success-content {
+            text-align: center;
+        }
+        
+        .success-title {
+            color: #6750A4;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 16px;
+        }
+        
+        .token-display {
+            background: #F7F2FF;
+            padding: 12px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 12px;
+            word-break: break-all;
+            margin: 16px 0;
+            border: 1px solid #E8DEF8;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .loading {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid #E8DEF8;
+            border-top: 2px solid #fff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="phone-container">
+        <div class="screen">
+            <div class="status-bar">
+                <span>9:41</span>
+                <span>Guacamolie Auth</span>
+                <span>100%</span>
+            </div>
+            
+            <div class="content">
+                <!-- Login Screen -->
+                <div id="loginScreen" class="card">
+                    <h1 class="title">Welcome Back</h1>
+                    <p class="subtitle">Sign in to your account</p>
+                    
+                    <div class="input-group">
+                        <div class="input-wrapper">
+                            <input type="email" id="loginEmail" class="input-field" placeholder=" ">
+                            <label class="input-label">Email</label>
+                        </div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <div class="input-wrapper">
+                            <input type="password" id="loginPassword" class="input-field" placeholder=" ">
+                            <label class="input-label">Password</label>
+                        </div>
+                    </div>
+                    
+                    <div id="loginError" class="error-text hidden">Invalid credentials. Please try again.</div>
+                    
+                    <button id="loginButton" class="button">Sign In</button>
+                    
+                    <div class="footer-text">
+                        Don't have an account? 
+                        <button id="toRegister" class="text-button">Sign Up</button>
+                    </div>
+                </div>
+                
+                <!-- Register Screen -->
+                <div id="registerScreen" class="card hidden">
+                    <h1 class="title">Create Account</h1>
+                    <p class="subtitle">Sign up for a new account</p>
+                    
+                    <div class="input-group">
+                        <div class="input-wrapper">
+                            <input type="text" id="registerName" class="input-field" placeholder=" ">
+                            <label class="input-label">Name (Optional)</label>
+                        </div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <div class="input-wrapper">
+                            <input type="email" id="registerEmail" class="input-field" placeholder=" ">
+                            <label class="input-label">Email</label>
+                        </div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <div class="input-wrapper">
+                            <input type="password" id="registerPassword" class="input-field" placeholder=" ">
+                            <label class="input-label">Password</label>
+                        </div>
+                    </div>
+                    
+                    <div id="registerError" class="error-text hidden">Registration failed. Please try again.</div>
+                    
+                    <button id="registerButton" class="button">Sign Up</button>
+                    
+                    <div class="footer-text">
+                        Already have an account? 
+                        <button id="toLogin" class="text-button">Sign In</button>
+                    </div>
+                </div>
+                
+                <!-- Success Screen -->
+                <div id="successScreen" class="card hidden">
+                    <div class="success-content">
+                        <h1 class="success-title">Authentication Successful!</h1>
+                        <p>You have successfully authenticated with the server.</p>
+                        
+                        <p style="font-weight: bold; margin-top: 16px;">JWT Token:</p>
+                        <div id="tokenDisplay" class="token-display">
+                            eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+                        </div>
+                        
+                        <button id="logoutButton" class="button">Logout</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM elements
+        const loginScreen = document.getElementById('loginScreen');
+        const registerScreen = document.getElementById('registerScreen');
+        const successScreen = document.getElementById('successScreen');
+        
+        const loginButton = document.getElementById('loginButton');
+        const registerButton = document.getElementById('registerButton');
+        const logoutButton = document.getElementById('logoutButton');
+        
+        const toRegister = document.getElementById('toRegister');
+        const toLogin = document.getElementById('toLogin');
+        
+        const loginError = document.getElementById('loginError');
+        const registerError = document.getElementById('registerError');
+        
+        // Navigation functions
+        function showScreen(screenToShow) {
+            [loginScreen, registerScreen, successScreen].forEach(screen => {
+                screen.classList.add('hidden');
+            });
+            screenToShow.classList.remove('hidden');
+        }
+        
+        function showLoading(button, text) {
+            button.disabled = true;
+            button.innerHTML = `<div class="loading"><div class="spinner"></div>${text}</div>`;
+        }
+        
+        function hideLoading(button, text) {
+            button.disabled = false;
+            button.innerHTML = text;
+        }
+        
+        function showError(errorElement, message) {
+            errorElement.textContent = message;
+            errorElement.classList.remove('hidden');
+        }
+        
+        function hideError(errorElement) {
+            errorElement.classList.add('hidden');
+        }
+        
+        // Event listeners
+        toRegister.addEventListener('click', () => {
+            showScreen(registerScreen);
+            hideError(loginError);
+        });
+        
+        toLogin.addEventListener('click', () => {
+            showScreen(loginScreen);
+            hideError(registerError);
+        });
+        
+        loginButton.addEventListener('click', async () => {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            if (!email || !password) {
+                showError(loginError, 'Please fill in all fields');
+                return;
+            }
+            
+            hideError(loginError);
+            showLoading(loginButton, 'Signing in...');
+            
+            // Simulate API call
+            try {
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                
+                // Simulate success for demo
+                if (email && password) {
+                    showScreen(successScreen);
+                } else {
+                    showError(loginError, 'Invalid credentials');
+                }
+            } catch (error) {
+                showError(loginError, 'Network error. Please try again.');
+            } finally {
+                hideLoading(loginButton, 'Sign In');
+            }
+        });
+        
+        registerButton.addEventListener('click', async () => {
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            
+            if (!email || !password) {
+                showError(registerError, 'Please fill in all required fields');
+                return;
+            }
+            
+            hideError(registerError);
+            showLoading(registerButton, 'Creating account...');
+            
+            // Simulate API call
+            try {
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                
+                // Simulate success for demo
+                showScreen(successScreen);
+            } catch (error) {
+                showError(registerError, 'Registration failed. Please try again.');
+            } finally {
+                hideLoading(registerButton, 'Sign Up');
+            }
+        });
+        
+        logoutButton.addEventListener('click', () => {
+            // Clear form fields
+            document.getElementById('loginEmail').value = '';
+            document.getElementById('loginPassword').value = '';
+            document.getElementById('registerName').value = '';
+            document.getElementById('registerEmail').value = '';
+            document.getElementById('registerPassword').value = '';
+            
+            showScreen(loginScreen);
+        });
+    </script>
+</body>
+</html>
