@@ -108,6 +108,7 @@ Registration endpoint for creating new accounts.
 - **Coroutines**: 1.8.1 for asynchronous programming
 - **Navigation Compose**: 2.7.7 for screen navigation
 - **Material3**: Latest Material Design components
+- **BCrypt**: 0.10.2 for secure password hashing
 
 ## Network Configuration
 
@@ -161,3 +162,5 @@ All errors are displayed to the user with appropriate messaging.
 - JWT tokens are handled securely in memory
 - No sensitive data is persisted locally
 - Network traffic is logged only in debug builds
+- **Password Security**: Passwords are hashed using bcrypt with a cost factor of 12 before sending to the backend API
+- **Frontend Consistency**: Uses the same bcrypt hashing approach as the Next.js frontend for consistency
